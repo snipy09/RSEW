@@ -1,136 +1,121 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RegimeGuard | SVD & HMM Market Regime Early Warning Terminal</title>
+    <title>RegimeGuard | Market Regime Early Warning System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: '#080d1a',
-                        cardbg: '#10172a',
-                        bordercolor: '#1e293b'
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #f8fafc; color: #0f172a; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .glass-panel {
-            background: rgba(16, 23, 42, 0.85);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
     </style>
 </head>
-<body class="bg-darkbg text-slate-100 min-h-screen">
-    <!-- Header -->
-    <header class="border-b border-gray-800 glass-panel sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+    <!-- Navigation Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="p-2 bg-purple-600/20 rounded-xl border border-purple-500/30 text-purple-400">
-                    <i class="fa-solid fa-brain text-xl"></i>
+                <div class="w-8 h-8 bg-slate-900 text-white rounded flex items-center justify-center font-bold text-xs">
+                    RG
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        RegimeGuard <span class="text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 font-mono">Rolling SVD + HMM</span>
-                    </h1>
-                    <p class="text-xs text-slate-400">Latent Factor Subspace Drift & Market Regime Shift Early Warning Engine</p>
+                <div class="flex items-center space-x-2">
+                    <span class="font-semibold text-sm text-slate-900">RegimeGuard</span>
+                    <span class="text-xs text-slate-400">|</span>
+                    <span class="text-xs font-medium text-slate-500">Rolling SVD & HMM Early Warning System</span>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
-                <span class="inline-flex items-center text-xs font-mono text-emerald-400 bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-800/40">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-2"></span> Gaussian HMM Active
+                <span class="inline-flex items-center text-xs font-mono text-slate-700 bg-slate-100 px-2.5 py-1 rounded border border-slate-200">
+                    Gaussian HMM 3-State Classifier
                 </span>
-                <a href="https://github.com/snipy09/RSEW" target="_blank" class="text-slate-400 hover:text-white text-sm flex items-center gap-1.5 transition">
-                    <i class="fab fa-github text-lg"></i> GitHub
+                <a href="https://github.com/snipy09/RSEW" target="_blank" class="text-xs text-slate-600 hover:text-slate-900 font-medium flex items-center gap-1">
+                    <i class="fab fa-github"></i> Repository
                 </a>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <!-- Controls -->
-        <div class="glass-panel p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <!-- Controls Panel -->
+        <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3 w-full md:w-auto">
-                <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 whitespace-nowrap">Asset Ticker</label>
-                <input type="text" id="tickerInput" value="SPY" class="w-36 bg-slate-950 border border-slate-700/80 rounded-xl px-4 py-2 text-slate-100 font-mono text-sm uppercase focus:outline-none focus:border-purple-500">
-                <button onclick="runRegimeAnalysis()" id="analyzeBtn" class="px-6 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl shadow-lg shadow-purple-600/30 flex items-center gap-2 transition cursor-pointer">
-                    <i class="fa-solid fa-radar"></i> Detect Regimes
+                <label class="text-xs font-semibold text-slate-700 uppercase tracking-wide whitespace-nowrap">Asset Ticker</label>
+                <input type="text" id="tickerInput" value="SPY" class="w-32 bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-mono uppercase focus:outline-none focus:border-slate-800">
+                <button onclick="runRegimeAnalysis()" id="analyzeBtn" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded shadow-sm flex items-center gap-2 transition cursor-pointer">
+                    <i class="fa-solid fa-radar text-xs"></i> Detect Regimes
                 </button>
             </div>
-            <div class="flex items-center gap-2 text-xs text-slate-400">
-                <span class="font-medium text-slate-300">Quick Assets:</span>
-                <button onclick="setTicker('SPY')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-mono transition">SPY (S&P 500)</button>
-                <button onclick="setTicker('QQQ')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-mono transition">QQQ (Nasdaq)</button>
-                <button onclick="setTicker('IWM')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-mono transition">IWM (Russell 2000)</button>
-                <button onclick="setTicker('TLT')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-mono transition">TLT (Bonds)</button>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="font-medium text-slate-500">Quick Assets:</span>
+                <button onclick="setTicker('SPY')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">SPY (S&P 500)</button>
+                <button onclick="setTicker('QQQ')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">QQQ (Nasdaq)</button>
+                <button onclick="setTicker('IWM')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">IWM (Russell 2000)</button>
+                <button onclick="setTicker('TLT')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">TLT (Bonds)</button>
             </div>
         </div>
 
-        <!-- Metric KPI Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="glass-panel p-5 rounded-2xl border-l-4 border-indigo-500">
-                <p class="text-xs text-slate-400 font-medium">Current Market Regime</p>
-                <h3 class="text-2xl font-bold text-indigo-400 mt-1 font-mono" id="kpiRegime">State --</h3>
-                <p class="text-xs text-slate-400 mt-1" id="kpiRegimeDesc">Gaussian HMM Classification</p>
+        <!-- Metric Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Current Regime State</span>
+                <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiRegime">State --</div>
+                <span class="text-xs text-slate-500 font-mono mt-1 block" id="kpiRegimeDesc">Gaussian HMM Classification</span>
             </div>
-            <div class="glass-panel p-5 rounded-2xl border-l-4 border-purple-500">
-                <p class="text-xs text-slate-400 font-medium">Active Warning Status</p>
-                <h3 class="text-2xl font-bold text-purple-400 mt-1 font-mono" id="kpiStatus">NORMAL</h3>
-                <p class="text-xs text-slate-400 mt-1" id="kpiWarnings">Total Warnings: --</p>
+            <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Active Warning Status</span>
+                <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiStatus">NORMAL</div>
+                <span class="text-xs text-slate-500 font-mono mt-1 block" id="kpiWarnings">Total Warnings: --</span>
             </div>
-            <div class="glass-panel p-5 rounded-2xl border-l-4 border-emerald-500">
-                <p class="text-xs text-slate-400 font-medium">Risk-Off Strategy Return</p>
-                <h3 class="text-2xl font-bold text-emerald-400 mt-1 font-mono" id="kpiStratReturn">--%</h3>
-                <p class="text-xs text-slate-400 mt-1" id="kpiBuyHold">Buy & Hold: --%</p>
+            <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Risk-Off Strategy Return</span>
+                <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiStratReturn">--%</div>
+                <span class="text-xs text-slate-500 font-mono mt-1 block" id="kpiBuyHold">Buy & Hold: --%</span>
             </div>
-            <div class="glass-panel p-5 rounded-2xl border-l-4 border-rose-500">
-                <p class="text-xs text-slate-400 font-medium">Alpha Outperformance</p>
-                <h3 class="text-2xl font-bold text-rose-400 mt-1 font-mono" id="kpiAlpha">--%</h3>
-                <p class="text-xs text-slate-400 mt-1">Lead-time Risk Mitigation</p>
+            <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Alpha Outperformance</span>
+                <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiAlpha">--%</div>
+                <span class="text-xs text-slate-500 font-mono mt-1 block">SVD Lead-Time Signal</span>
             </div>
         </div>
 
-        <!-- 4-Panel Analysis Dashboard -->
+        <!-- 3-Panel Charts Layout -->
         <div class="space-y-6">
-            <!-- Panel 1: Price & Regime Color Map -->
-            <div class="glass-panel p-6 rounded-2xl">
-                <h2 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-area text-indigo-400"></i> Asset Price Trajectory & HMM Market Regimes
-                </h2>
-                <div id="chartPrice" class="w-full h-[320px]"></div>
+            <!-- Panel 1: Price Trajectory -->
+            <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-sm font-semibold text-slate-900">Asset Price Trajectory & Market Regime Transitions</h2>
+                    <span class="text-xs text-slate-500 font-mono">60-Day Rolling Window</span>
+                </div>
+                <div id="chartPrice" class="w-full h-[300px]"></div>
             </div>
 
             <!-- Panel 2: Latent Instability Metrics -->
-            <div class="glass-panel p-6 rounded-2xl">
-                <h2 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-wave-square text-purple-400"></i> Latent Factor Instability Metrics (Singular Value Change ΔΣ & Subspace Drift D_t)
-                </h2>
-                <div id="chartInstability" class="w-full h-[280px]"></div>
+            <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-sm font-semibold text-slate-900">Latent Factor Subspace Instability (ΔΣ & Subspace Drift D_t)</h2>
+                    <span class="text-xs text-slate-500 font-mono">Rolling SVD Vector Drift</span>
+                </div>
+                <div id="chartInstability" class="w-full h-[260px]"></div>
             </div>
 
             <!-- Panel 3: Risk-Off Strategy Backtest -->
-            <div class="glass-panel p-6 rounded-2xl">
-                <h2 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-scale-balanced text-emerald-400"></i> Dynamic Risk-Off Allocation Backtest vs. Buy & Hold
-                </h2>
-                <div id="chartBacktest" class="w-full h-[300px]"></div>
+            <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-sm font-semibold text-slate-900">Dynamic Risk-Off Allocation Backtest vs. Buy & Hold Benchmark</h2>
+                    <span class="text-xs text-slate-500 font-mono">Cumulative Performance</span>
+                </div>
+                <div id="chartBacktest" class="w-full h-[280px]"></div>
             </div>
         </div>
     </main>
 
-    <footer class="border-t border-gray-800 py-6 text-center text-xs text-slate-500">
-        <p>RegimeGuard System • Built for Quantitative Portfolio Risk & Early Warning Signal Detection</p>
+    <footer class="border-t border-slate-200 bg-white py-4 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            RegimeGuard Quantitative System • Built with Python, Rolling SVD & Hidden Markov Models
+        </div>
     </footer>
 
     <script>
@@ -142,7 +127,7 @@
         async function runRegimeAnalysis() {
             const btn = document.getElementById('analyzeBtn');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Analyzing...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-xs"></i> Analyzing...`;
 
             const ticker = document.getElementById('tickerInput').value.trim();
 
@@ -161,7 +146,7 @@
                 alert('Connection error');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-radar"></i> Detect Regimes`;
+                btn.innerHTML = `<i class="fa-solid fa-radar text-xs"></i> Detect Regimes`;
             }
         }
 
@@ -169,12 +154,12 @@
             const regimesMap = { 0: 'Low Vol Bull', 1: 'Transition State', 2: 'High Vol Crisis' };
             const currRegime = data.current_regime;
 
-            document.getElementById('kpiRegime').innerText = 'Regime ' + currRegime;
+            document.getElementById('kpiRegime').innerText = 'State ' + currRegime;
             document.getElementById('kpiRegimeDesc').innerText = regimesMap[currRegime] || 'Market State';
 
             const currSig = data.current_signal;
-            document.getElementById('kpiStatus').innerText = currSig === 1 ? 'WARNING ALERT' : 'NORMAL';
-            document.getElementById('kpiStatus').className = 'text-2xl font-bold mt-1 font-mono ' + (currSig === 1 ? 'text-rose-400' : 'text-emerald-400');
+            document.getElementById('kpiStatus').innerText = currSig === 1 ? 'ALERT: HIGH INSTABILITY' : 'NORMAL';
+            document.getElementById('kpiStatus').className = 'text-2xl font-bold mt-1 font-mono ' + (currSig === 1 ? 'text-rose-600' : 'text-slate-900');
             document.getElementById('kpiWarnings').innerText = 'Total Warnings: ' + data.total_warnings + ' Days';
 
             document.getElementById('kpiStratReturn').innerText = (data.strategy_return * 100).toFixed(2) + '%';
@@ -182,47 +167,44 @@
 
             const alpha = data.outperformance * 100;
             document.getElementById('kpiAlpha').innerText = (alpha >= 0 ? '+' : '') + alpha.toFixed(2) + '%';
-            document.getElementById('kpiAlpha').className = 'text-2xl font-bold mt-1 font-mono ' + (alpha >= 0 ? 'text-emerald-400' : 'text-rose-400');
+            document.getElementById('kpiAlpha').className = 'text-2xl font-bold mt-1 font-mono ' + (alpha >= 0 ? 'text-emerald-600' : 'text-slate-900');
 
             const series = data.time_series;
             const dates = series.map(s => s.date);
             const prices = series.map(s => s.close);
-            const regimes = series.map(s => s.regime);
             const deltaSigma = series.map(s => s.sing_val_change);
             const drift = series.map(s => s.subspace_drift);
-            const instability = series.map(s => s.instability_index);
-            const signals = series.map(s => s.warning_signal);
             const bhCum = series.map(s => s.buy_hold_cum * 100);
             const stratCum = series.map(s => s.strategy_cum * 100);
 
-            // Panel 1: Price Chart colored by Regime
+            // Panel 1: Price
             const priceTrace = {
                 x: dates,
                 y: prices,
                 mode: 'lines',
                 type: 'scatter',
                 name: data.ticker + ' Price',
-                line: { color: '#818cf8', width: 2 }
+                line: { color: '#0f172a', width: 2 }
             };
 
             const layoutPrice = {
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                plot_bgcolor: 'rgba(0,0,0,0)',
-                margin: { l: 50, r: 20, t: 10, b: 40 },
-                xaxis: { color: '#94a3b8', gridcolor: '#1f2937' },
-                yaxis: { title: 'Price ($)', color: '#94a3b8', gridcolor: '#1f2937' }
+                paper_bgcolor: '#ffffff',
+                plot_bgcolor: '#ffffff',
+                margin: { l: 45, r: 15, t: 10, b: 35 },
+                xaxis: { color: '#475569', gridcolor: '#f1f5f9' },
+                yaxis: { title: 'Price ($)', color: '#475569', gridcolor: '#f1f5f9' }
             };
 
             Plotly.newPlot('chartPrice', [priceTrace], layoutPrice);
 
-            // Panel 2: Instability Metrics
+            // Panel 2: Instability
             const deltaTrace = {
                 x: dates,
                 y: deltaSigma,
                 mode: 'lines',
                 type: 'scatter',
                 name: 'Singular Value Change (ΔΣ)',
-                line: { color: '#a855f7', width: 1.5 }
+                line: { color: '#2563eb', width: 1.5 }
             };
 
             const driftTrace = {
@@ -231,16 +213,16 @@
                 mode: 'lines',
                 type: 'scatter',
                 name: 'Subspace Drift (D_t)',
-                line: { color: '#06b6d4', width: 1.5 }
+                line: { color: '#dc2626', width: 1.5 }
             };
 
             const layoutInstability = {
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                plot_bgcolor: 'rgba(0,0,0,0)',
-                margin: { l: 50, r: 20, t: 10, b: 40 },
-                xaxis: { color: '#94a3b8', gridcolor: '#1f2937' },
-                yaxis: { title: 'Instability Magnitude', color: '#94a3b8', gridcolor: '#1f2937' },
-                legend: { font: { color: '#e2e8f0' }, orientation: 'h', y: 1.15 }
+                paper_bgcolor: '#ffffff',
+                plot_bgcolor: '#ffffff',
+                margin: { l: 45, r: 15, t: 10, b: 35 },
+                xaxis: { color: '#475569', gridcolor: '#f1f5f9' },
+                yaxis: { title: 'Magnitude', color: '#475569', gridcolor: '#f1f5f9' },
+                legend: { font: { color: '#334155', size: 11 }, orientation: 'h', y: 1.15 }
             };
 
             Plotly.newPlot('chartInstability', [deltaTrace, driftTrace], layoutInstability);
@@ -251,8 +233,8 @@
                 y: bhCum,
                 mode: 'lines',
                 type: 'scatter',
-                name: 'Buy & Hold Benchmark',
-                line: { color: '#64748b', width: 1.5, dash: 'dash' }
+                name: 'Buy & Hold',
+                line: { color: '#94a3b8', width: 1.5, dash: 'dash' }
             };
 
             const stratTrace = {
@@ -260,17 +242,17 @@
                 y: stratCum,
                 mode: 'lines',
                 type: 'scatter',
-                name: 'Risk-Off Strategy (SVD Signal)',
-                line: { color: '#10b981', width: 2.5 }
+                name: 'Risk-Off Strategy',
+                line: { color: '#16a34a', width: 2 }
             };
 
             const layoutBacktest = {
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                plot_bgcolor: 'rgba(0,0,0,0)',
-                margin: { l: 50, r: 20, t: 10, b: 40 },
-                xaxis: { color: '#94a3b8', gridcolor: '#1f2937' },
-                yaxis: { title: 'Cumulative Return (%)', color: '#94a3b8', gridcolor: '#1f2937' },
-                legend: { font: { color: '#e2e8f0' }, orientation: 'h', y: 1.15 }
+                paper_bgcolor: '#ffffff',
+                plot_bgcolor: '#ffffff',
+                margin: { l: 45, r: 15, t: 10, b: 35 },
+                xaxis: { color: '#475569', gridcolor: '#f1f5f9' },
+                yaxis: { title: 'Return (%)', color: '#475569', gridcolor: '#f1f5f9' },
+                legend: { font: { color: '#334155', size: 11 }, orientation: 'h', y: 1.15 }
             };
 
             Plotly.newPlot('chartBacktest', [bhTrace, stratTrace], layoutBacktest);
