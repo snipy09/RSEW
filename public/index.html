@@ -40,44 +40,73 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         <!-- Controls Panel -->
-        <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3 w-full md:w-auto">
-                <label class="text-xs font-semibold text-slate-700 uppercase tracking-wide whitespace-nowrap">Asset Ticker</label>
-                <input type="text" id="tickerInput" value="SPY" class="w-32 bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-mono uppercase focus:outline-none focus:border-slate-800">
-                <button onclick="runRegimeAnalysis()" id="analyzeBtn" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded shadow-sm flex items-center gap-2 transition cursor-pointer">
-                    <i class="fa-solid fa-radar text-xs"></i> Detect Regimes
-                </button>
+        <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                <div class="md:col-span-4">
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">Asset Ticker</label>
+                    <input type="text" id="tickerInput" value="SPY" class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-mono uppercase focus:outline-none focus:border-slate-800">
+                </div>
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">Lookback Horizon</label>
+                    <select id="yearsSelect" class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-mono focus:outline-none focus:border-slate-800">
+                        <option value="1">1 Year</option>
+                        <option value="3" selected>3 Years</option>
+                        <option value="5">5 Years</option>
+                    </select>
+                </div>
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">Detection Engine</label>
+                    <select id="modeSelect" class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-mono focus:outline-none focus:border-slate-800">
+                        <option value="adaptive" selected>Adaptive Quantile (Dynamic)</option>
+                        <option value="smoothed">Smoothed Fixed Threshold</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <button onclick="runRegimeAnalysis()" id="analyzeBtn" class="w-full px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded shadow-sm flex items-center justify-center gap-2 transition cursor-pointer">
+                        <i class="fa-solid fa-radar text-xs"></i> Detect
+                    </button>
+                </div>
             </div>
-            <div class="flex items-center gap-2 text-xs">
-                <span class="font-medium text-slate-500">Quick Assets:</span>
-                <button onclick="setTicker('SPY')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">SPY (S&P 500)</button>
-                <button onclick="setTicker('QQQ')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">QQQ (Nasdaq)</button>
-                <button onclick="setTicker('IWM')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">IWM (Russell 2000)</button>
-                <button onclick="setTicker('TLT')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">TLT (Bonds)</button>
+
+            <!-- Quick Tickers -->
+            <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="font-medium text-slate-500">Quick Assets:</span>
+                    <button onclick="setTicker('SPY')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">SPY (S&P 500)</button>
+                    <button onclick="setTicker('QQQ')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">QQQ (Nasdaq)</button>
+                    <button onclick="setTicker('IWM')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">IWM (Russell 2000)</button>
+                    <button onclick="setTicker('TLT')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">TLT (Bonds)</button>
+                    <button onclick="setTicker('BTC-USD')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">BTC-USD</button>
+                </div>
+                <div>
+                    <button onclick="exportCSV()" id="exportBtn" class="text-slate-600 hover:text-slate-900 font-medium flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-download text-xs"></i> Export Telemetry (CSV)
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Empirical Model Accuracy & Historical Drawdown Audit Telemetry Banner -->
+        <!-- Empirical Model Accuracy & Telemetry Banner -->
         <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h3 class="text-xs font-semibold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-shield-cat text-slate-700"></i> Empirical Drawdown Protection & Backtest Telemetry
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">5-Year SPY Market Stress Test & Subspace Drift Risk Mitigation</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Rolling SVD & Latent Subspace Drift (D_t) Out-of-Sample Protection</p>
                 </div>
-                <div class="flex items-center gap-6 font-mono text-xs">
+                <div class="flex flex-wrap items-center gap-6 font-mono text-xs">
                     <div>
-                        <span class="text-slate-500 block text-[10px] uppercase">Benchmark Max Drawdown</span>
-                        <span class="font-semibold text-rose-700">-24.50%</span>
+                        <span class="text-slate-500 block text-[10px] uppercase">Benchmark Max DD</span>
+                        <span class="font-semibold text-rose-700" id="statBhDD">-24.50%</span>
                     </div>
                     <div class="border-l border-slate-200 pl-6">
-                        <span class="text-slate-500 block text-[10px] uppercase">SVD Risk-Off Max Drawdown</span>
-                        <span class="font-semibold text-emerald-700">-19.55%</span>
+                        <span class="text-slate-500 block text-[10px] uppercase">Strategy Max DD</span>
+                        <span class="font-semibold text-emerald-700" id="statStratDD">-19.55%</span>
                     </div>
                     <div class="border-l border-slate-200 pl-6">
                         <span class="text-slate-500 block text-[10px] uppercase">Tail Risk Reduction</span>
-                        <span class="font-semibold text-slate-900">+4.95% Protection</span>
+                        <span class="font-semibold text-slate-900" id="statDDReduce">+4.95% Protection</span>
                     </div>
                 </div>
             </div>
@@ -103,7 +132,53 @@
             <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
                 <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Alpha Outperformance</span>
                 <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiAlpha">--%</div>
-                <span class="text-xs text-slate-500 font-mono mt-1 block">SVD Lead-Time Signal</span>
+                <span class="text-xs text-slate-500 font-mono mt-1 block" id="kpiAlphaDesc">SVD Lead-Time Signal</span>
+            </div>
+        </div>
+
+        <!-- Risk-Adjusted Quantitative Comparison Table -->
+        <div class="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-xs font-semibold text-slate-900 uppercase tracking-wider">Institutional Performance & Risk Audit</h3>
+                <span class="text-xs font-mono text-slate-500">Risk-Free Rate: 4.5%</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-50 text-slate-600 font-mono uppercase text-[11px] border-b border-slate-200">
+                        <tr>
+                            <th class="p-3">Portfolio Strategy</th>
+                            <th class="p-3">Annualized Return</th>
+                            <th class="p-3">Annualized Volatility</th>
+                            <th class="p-3">Sharpe Ratio</th>
+                            <th class="p-3">Sortino Ratio</th>
+                            <th class="p-3">Max Drawdown</th>
+                            <th class="p-3">Calmar Ratio</th>
+                            <th class="p-3">Historical VaR (95%)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 font-mono text-slate-800" id="metricsTableBody">
+                        <tr>
+                            <td class="p-3 font-semibold text-slate-900">Dynamic Risk-Off SVD</td>
+                            <td class="p-3" id="mStratAnnRet">--</td>
+                            <td class="p-3" id="mStratAnnVol">--</td>
+                            <td class="p-3 font-semibold text-emerald-600" id="mStratSharpe">--</td>
+                            <td class="p-3" id="mStratSortino">--</td>
+                            <td class="p-3 text-emerald-600 font-semibold" id="mStratMaxDD">--</td>
+                            <td class="p-3" id="mStratCalmar">--</td>
+                            <td class="p-3" id="mStratVaR">--</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-semibold text-slate-500">Buy & Hold Benchmark</td>
+                            <td class="p-3" id="mBhAnnRet">--</td>
+                            <td class="p-3" id="mBhAnnVol">--</td>
+                            <td class="p-3 font-semibold text-slate-700" id="mBhSharpe">--</td>
+                            <td class="p-3" id="mBhSortino">--</td>
+                            <td class="p-3 text-rose-600 font-semibold" id="mBhMaxDD">--</td>
+                            <td class="p-3" id="mBhCalmar">--</td>
+                            <td class="p-3" id="mBhVaR">--</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -131,7 +206,7 @@
             <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-2">
                     <h2 class="text-sm font-semibold text-slate-900">Dynamic Risk-Off Allocation Backtest vs. Buy & Hold Benchmark</h2>
-                    <span class="text-xs text-slate-500 font-mono">Cumulative Performance</span>
+                    <span class="text-xs text-slate-500 font-mono">Cumulative Performance & Drawdowns</span>
                 </div>
                 <div id="chartBacktest" class="w-full h-[280px]"></div>
             </div>
@@ -145,6 +220,8 @@
     </footer>
 
     <script>
+        let currentTelemetry = null;
+
         function setTicker(t) {
             document.getElementById('tickerInput').value = t;
             runRegimeAnalysis();
@@ -156,9 +233,11 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-xs"></i> Analyzing...`;
 
             const ticker = document.getElementById('tickerInput').value.trim();
+            const years = document.getElementById('yearsSelect').value;
+            const mode = document.getElementById('modeSelect').value;
 
             try {
-                const res = await fetch(`/api/analyze?ticker=${ticker}&years=3`);
+                const res = await fetch(`/api/analyze?ticker=${ticker}&years=${years}&mode=${mode}`);
                 const data = await res.json();
 
                 if (!res.ok || data.error) {
@@ -166,13 +245,14 @@
                     return;
                 }
 
+                currentTelemetry = data;
                 renderDashboard(data);
             } catch (err) {
                 console.error(err);
                 alert('Connection error');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-radar text-xs"></i> Detect Regimes`;
+                btn.innerHTML = `<i class="fa-solid fa-radar text-xs"></i> Detect`;
             }
         }
 
@@ -195,96 +275,128 @@
             document.getElementById('kpiAlpha').innerText = (alpha >= 0 ? '+' : '') + alpha.toFixed(2) + '%';
             document.getElementById('kpiAlpha').className = 'text-2xl font-bold mt-1 font-mono ' + (alpha >= 0 ? 'text-emerald-600' : 'text-slate-900');
 
+            // Telemetry header stats
+            if (data.metrics) {
+                const s = data.metrics.strategy;
+                const b = data.metrics.benchmark;
+
+                document.getElementById('statBhDD').innerText = (b.max_drawdown * 100).toFixed(2) + '%';
+                document.getElementById('statStratDD').innerText = (s.max_drawdown * 100).toFixed(2) + '%';
+                document.getElementById('statDDReduce').innerText = '+' + (data.metrics.max_drawdown_reduction * 100).toFixed(2) + '% Protection';
+
+                // Table
+                document.getElementById('mStratAnnRet').innerText = (s.annualized_return * 100).toFixed(2) + '%';
+                document.getElementById('mStratAnnVol').innerText = (s.annualized_volatility * 100).toFixed(2) + '%';
+                document.getElementById('mStratSharpe').innerText = s.sharpe_ratio;
+                document.getElementById('mStratSortino').innerText = s.sortino_ratio;
+                document.getElementById('mStratMaxDD').innerText = (s.max_drawdown * 100).toFixed(2) + '%';
+                document.getElementById('mStratCalmar').innerText = s.calmar_ratio;
+                document.getElementById('mStratVaR').innerText = (s.var_95 * 100).toFixed(2) + '%';
+
+                document.getElementById('mBhAnnRet').innerText = (b.annualized_return * 100).toFixed(2) + '%';
+                document.getElementById('mBhAnnVol').innerText = (b.annualized_volatility * 100).toFixed(2) + '%';
+                document.getElementById('mBhSharpe').innerText = b.sharpe_ratio;
+                document.getElementById('mBhSortino').innerText = b.sortino_ratio;
+                document.getElementById('mBhMaxDD').innerText = (b.max_drawdown * 100).toFixed(2) + '%';
+                document.getElementById('mBhCalmar').innerText = b.calmar_ratio;
+                document.getElementById('mBhVaR').innerText = (b.var_95 * 100).toFixed(2) + '%';
+            }
+
             const series = data.time_series;
             const dates = series.map(s => s.date);
             const prices = series.map(s => s.close);
-            const deltaSigma = series.map(s => s.sing_val_change);
-            const drift = series.map(s => s.subspace_drift);
-            const bhCum = series.map(s => s.buy_hold_cum * 100);
-            const stratCum = series.map(s => s.strategy_cum * 100);
 
-            // Panel 1: Price
-            const priceTrace = {
+            // Chart 1: Price
+            Plotly.newPlot('chartPrice', [{
                 x: dates,
                 y: prices,
-                mode: 'lines',
                 type: 'scatter',
-                name: data.ticker + ' Price',
-                line: { color: '#0f172a', width: 2 }
-            };
-
-            const layoutPrice = {
-                paper_bgcolor: '#ffffff',
-                plot_bgcolor: '#ffffff',
-                margin: { l: 45, r: 15, t: 10, b: 35 },
-                xaxis: { color: '#475569', gridcolor: '#f1f5f9' },
-                yaxis: { title: 'Price ($)', color: '#475569', gridcolor: '#f1f5f9' }
-            };
-
-            Plotly.newPlot('chartPrice', [priceTrace], layoutPrice);
-
-            // Panel 2: Instability
-            const deltaTrace = {
-                x: dates,
-                y: deltaSigma,
                 mode: 'lines',
-                type: 'scatter',
-                name: 'Singular Value Change (ΔΣ)',
-                line: { color: '#2563eb', width: 1.5 }
-            };
+                line: { color: '#0f172a', width: 1.5 },
+                name: data.ticker
+            }], {
+                margin: { t: 10, r: 20, l: 40, b: 30 },
+                xaxis: { gridcolor: '#f1f5f9' },
+                yaxis: { gridcolor: '#f1f5f9' },
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent'
+            }, { responsive: true, displayModeBar: false });
 
-            const driftTrace = {
-                x: dates,
-                y: drift,
-                mode: 'lines',
-                type: 'scatter',
-                name: 'Subspace Drift (D_t)',
-                line: { color: '#dc2626', width: 1.5 }
-            };
+            // Chart 2: Instability & Drift
+            Plotly.newPlot('chartInstability', [
+                {
+                    x: dates,
+                    y: series.map(s => s.instability),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: '#0284c7', width: 1.5 },
+                    name: 'Instability Index'
+                },
+                {
+                    x: dates,
+                    y: series.map(s => s.subspace_drift),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: '#e11d48', width: 1, dash: 'dot' },
+                    name: 'Subspace Drift (D_t)'
+                }
+            ], {
+                margin: { t: 10, r: 20, l: 40, b: 30 },
+                xaxis: { gridcolor: '#f1f5f9' },
+                yaxis: { gridcolor: '#f1f5f9' },
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                legend: { orientation: 'h', y: 1.15 }
+            }, { responsive: true, displayModeBar: false });
 
-            const layoutInstability = {
-                paper_bgcolor: '#ffffff',
-                plot_bgcolor: '#ffffff',
-                margin: { l: 45, r: 15, t: 10, b: 35 },
-                xaxis: { color: '#475569', gridcolor: '#f1f5f9' },
-                yaxis: { title: 'Magnitude', color: '#475569', gridcolor: '#f1f5f9' },
-                legend: { font: { color: '#334155', size: 11 }, orientation: 'h', y: 1.15 }
-            };
-
-            Plotly.newPlot('chartInstability', [deltaTrace, driftTrace], layoutInstability);
-
-            // Panel 3: Backtest
-            const bhTrace = {
-                x: dates,
-                y: bhCum,
-                mode: 'lines',
-                type: 'scatter',
-                name: 'Buy & Hold',
-                line: { color: '#94a3b8', width: 1.5, dash: 'dash' }
-            };
-
-            const stratTrace = {
-                x: dates,
-                y: stratCum,
-                mode: 'lines',
-                type: 'scatter',
-                name: 'Risk-Off Strategy',
-                line: { color: '#16a34a', width: 2 }
-            };
-
-            const layoutBacktest = {
-                paper_bgcolor: '#ffffff',
-                plot_bgcolor: '#ffffff',
-                margin: { l: 45, r: 15, t: 10, b: 35 },
-                xaxis: { color: '#475569', gridcolor: '#f1f5f9' },
-                yaxis: { title: 'Return (%)', color: '#475569', gridcolor: '#f1f5f9' },
-                legend: { font: { color: '#334155', size: 11 }, orientation: 'h', y: 1.15 }
-            };
-
-            Plotly.newPlot('chartBacktest', [bhTrace, stratTrace], layoutBacktest);
+            // Chart 3: Backtest
+            Plotly.newPlot('chartBacktest', [
+                {
+                    x: dates,
+                    y: series.map(s => s.cum_strategy * 100),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: '#059669', width: 2 },
+                    name: 'SVD Early-Warning Strategy'
+                },
+                {
+                    x: dates,
+                    y: series.map(s => s.cum_buy_hold * 100),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: '#64748b', width: 1.5, dash: 'dash' },
+                    name: 'Buy & Hold'
+                }
+            ], {
+                margin: { t: 10, r: 20, l: 40, b: 30 },
+                xaxis: { gridcolor: '#f1f5f9' },
+                yaxis: { gridcolor: '#f1f5f9', ticksuffix: '%' },
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                legend: { orientation: 'h', y: 1.15 }
+            }, { responsive: true, displayModeBar: false });
         }
 
-        window.addEventListener('DOMContentLoaded', runRegimeAnalysis);
+        function exportCSV() {
+            if (!currentTelemetry || !currentTelemetry.time_series) {
+                alert('Run analysis first to export telemetry.');
+                return;
+            }
+            const rows = [['Date', 'Close', 'Regime', 'Instability', 'SubspaceDrift', 'Signal', 'CumStrategy', 'CumBuyHold', 'DrawdownStrategy', 'DrawdownBuyHold']];
+            currentTelemetry.time_series.forEach(item => {
+                rows.push([item.date, item.close, item.regime, item.instability, item.subspace_drift, item.signal, item.cum_strategy, item.cum_buy_hold, item.drawdown_strat, item.drawdown_bh]);
+            });
+            const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `rsew_${currentTelemetry.ticker}_telemetry.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        window.onload = runRegimeAnalysis;
     </script>
 </body>
 </html>
